@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const Rutas_Usuarios = require('./Fuente/Rutas/Rutas_Usuarios');
+const Rutas_Usuarios = require('./fuente/rutas/rutaUsuarios');
 
 
 

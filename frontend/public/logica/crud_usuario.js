@@ -95,24 +95,24 @@ async function agregarCliente() {
         return;
     }
     
-    const Cliente = { nombre, direccion };
+    const usuario = { nombre, direccion };
 
     try {
-        await create(usuarios_url, Cliente);
+        await create(usuarios_url, usuario);
         alert('Agregado con éxito');
         limpiarFormulario();
         await actualizarLista();
         llenarSelect();
     } catch (error) {
-        alert('Error al agregar Cliente.');
+        alert('Error al agregar Usuario.');
     }
 }
 
-async function eliminarCliente() {
-    const selectedId = document.getElementById('selectCliente').value;
+async function eliminarUsuario() {
+    const selectedId = document.getElementById('selectUsuario').value;
 
     if (!selectedId) {
-        alert('Por favor, seleccione un cliente para eliminar.');
+        alert('Por favor, seleccione un usuario para eliminar.');
         return;
     }
 
@@ -152,6 +152,25 @@ async function editarCliente() {
         alert('Error al editar Cliente.');
     } 
 }
+async function eliminarCliente() {
+    const selectedId = document.getElementById('selectCliente').value;
+
+    if (!selectedId) {
+        alert('Por favor, seleccione un cliente para eliminar.');
+        return;
+    }
+
+    try {
+        await eliminate(usuarios_url, selectedId);
+        alert('Eliminado con éxito');
+        limpiarFormulario();
+        await actualizarLista();
+        llenarSelect();
+    } catch (error) {
+        alert(`Error al eliminar para el ID: ${selectedId}.`);
+    }
+}
+
 
 function llenarSelect() {
     const selectCliente = document.getElementById('selectCliente');
@@ -235,4 +254,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     llenarSelect();
     actualizarLista();
-});
+});eliminarCliente

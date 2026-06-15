@@ -1,5 +1,5 @@
-const pool = require("../../database");
-const queries = require('../Consultas/Consultas_Clientes');
+const pool = require("../../db");
+const queries = require('../consultas/consultasUsuarios');
 
 const get = (req, res) => {
     pool.query(queries.get, (error, results) => { // Obtener todos los productos 
