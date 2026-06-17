@@ -1,22 +1,41 @@
+<!--
+  crud_usuario.html
+
+  This page renders a simple CRUD interface for managing "Usuario" (User)
+  records. It is composed of three columns:
+    1. A form to add a new user.
+    2. A dropdown + form to select, edit, or delete an existing user.
+    3. A table that lists all current users.
+
+  All dynamic behavior (API calls, DOM updates) is handled by
+  "crud_usuario.js", which is loaded at the end of the body.
+-->
 <!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Crud Clientes</title>
+    <title>Crud Usuarios</title>
     <link rel="stylesheet" href="../estilos/crud_usuario.css" />
   </head>
 
   <body>
+    <!-- Navigation link back to the site's home page. -->
     <div>
       <a href="../index.html" class="home-button"
         >Regresar a la página de inicio</a
       >
     </div>
     <hr />
+
     <div class="container">
+      <!--
+        Column 1: Add User form.
+        Contains the input fields and button used to create a new user
+        via the "agregarUsuario()" function in crud_usuario.js.
+      -->
       <div class="column form-column">
-        <h2>Agregar Cliente</h2>
+        <h2>Agregar Usuario</h2>
         <input
           type="text"
           id="nombre"
@@ -31,9 +50,16 @@
         />
         <button id="btnAgregar" class="btn btn-agregar">Agregar</button>
       </div>
+
+      <!--
+        Column 2: Select / Edit / Delete User.
+        The dropdown is populated dynamically by "llenarSelect()".
+        Selecting a user auto-fills the edit fields below, which are then
+        used by "editarUsuario()" and "eliminarUsuario()".
+      -->
       <div class="column select-column">
-        <h2>Seleccionar Cliente</h2>
-        <select id="selectCliente" class="select-input">
+        <h2>Seleccionar Usuario</h2>
+        <select id="selectUsuario" class="select-input">
           <option value="">Seleccionar</option>
         </select>
         <br />
@@ -48,13 +74,19 @@
           type="text"
           id="direccionEditar"
           class="form-input"
-          placeholder="Direccion|"
+          placeholder="Direccion"
         />
         <button id="btnEditar" class="btn btn-update">Editar</button>
         <button id="btnEliminar" class="btn btn-delete">Eliminar</button>
       </div>
+
+      <!--
+        Column 3: User List.
+        The table body ("UsuariosList") is populated dynamically by
+        "actualizarLista()" every time the data changes.
+      -->
       <div class="column view-column">
-        <h2>Lista de Clientes</h2>
+        <h2>Lista de Usuarios</h2>
         <table>
           <thead>
             <tr>
@@ -67,6 +99,8 @@
         </table>
       </div>
     </div>
+
+    <!-- Script containing all CRUD logic and event handlers. -->
     <script src="../logica/crud_usuario.js"></script>
   </body>
 </html>

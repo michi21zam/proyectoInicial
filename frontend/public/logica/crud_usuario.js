@@ -1,10 +1,27 @@
-const usuarios_url = 'http://localhost:3000/api/usuarios'; // URL base de la API para Usuarios
+/**
+ * crud_usuario.js
+ *
+ * This file implements the CRUD (Create, Read, Update, Delete) logic
+ * for managing "Usuario" (User) records through a REST API.
+ * It handles all communication with the backend, as well as the DOM
+ * manipulation needed to keep the form, dropdown, and table in sync.
+ */
 
-function get(url) { // Función para realizar una solicitud GET a la API
+// Base URL for the Users API endpoint.
+const usuarios_url = 'http://localhost:3000/api/usuarios';
+
+/**
+ * Sends a GET request to the given URL and returns the parsed JSON response.
+ *
+ * @param {string} url - The endpoint to fetch data from.
+ * @returns {Promise<Object|Array>} A promise that resolves with the parsed JSON data.
+ * @throws {Error} If the response status is not OK (e.g. 404, 500).
+ */
+function get(url) {
     return fetch(url)
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Error al obtener los datos');
+          throw new Error('Error fetching data');
         }
         return response.json();
       })
@@ -14,32 +31,45 @@ function get(url) { // Función para realizar una solicitud GET a la API
       });
 }
 
+/**
+ * Sends a POST request to create a new record on the server.
+ *
+ * @param {string} url - The endpoint to send the new record to.
+ * @param {Object} data - The object containing the new record's data.
+ * @returns {Promise<Object>} A promise that resolves with the created record returned by the server.
+ * @throws {Error} If the request fails or the response status is not OK.
+ */
 function create(url, data) {
     const requestOptions = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data), // le da el formato JSON a los datos que se van a enviar en el cuerpo de la solicitud
+        // Converts the JS object into a JSON string for the request body.
+        body: JSON.stringify(data),
     };
 
     return fetch(url, requestOptions)
         .then(response => {
             if (!response.ok) {
-                throw new Error(`La solicitud no se pudo completar correctamente. Código de estado: ${response.status}`);
+                throw new Error(`The request could not be completed successfully. Status code: ${response.status}`);
             }
             return response.json();
         })
-        /*.then(data => {
-            console.log('Respuesta de la API:', data);
-            return data;
-        })*/
         .catch(error => {
-            console.error('Error en la solicitud:', error);
+            console.error('Request error:', error);
             throw error;
         });
 }
 
+/**
+ * Sends a PUT request to update an existing record on the server.
+ *
+ * @param {string} url - The full endpoint of the record to update (including its ID).
+ * @param {Object} data - The object containing the updated field values.
+ * @returns {Promise<Object>} A promise that resolves with the updated record returned by the server.
+ * @throws {Error} If the request fails or the response status is not OK.
+ */
 function update(url, data) {
   const requestOptions = {
     method: 'PUT',
@@ -51,20 +81,24 @@ function update(url, data) {
   return fetch(url, requestOptions)
     .then(response => {
       if (!response.ok) {
-        throw new Error('La solicitud no se pudo completar correctamente');
+        throw new Error('The request could not be completed successfully');
       }
       return response.json();
     })
-    /*.then(data => {
-      console.log('Respuesta de la API:', data);
-      return data;
-    })*/
     .catch(error => {
-      console.error('Error en la solicitud:', error);
+      console.error('Request error:', error);
       throw error;
     });
 }
 
+/**
+ * Sends a DELETE request to remove a record from the server by its ID.
+ *
+ * @param {string} url - The base endpoint (without the ID appended).
+ * @param {string|number} id - The unique identifier of the record to delete.
+ * @returns {Promise<void>} A promise that resolves once the record has been deleted.
+ * @throws {Error} If the request fails or the response status is not OK.
+ */
 function eliminate(url, id) {
     const requestOptions = {
       method: 'DELETE',
@@ -72,68 +106,68 @@ function eliminate(url, id) {
         'Content-Type': 'application/json',
       },
     };
-  
+
     return fetch(`${url}/${id}`, requestOptions)
       .then((response) => {
         if (!response.ok) {
-          throw new Error('La solicitud no se pudo completar correctamente');
+          throw new Error('The request could not be completed successfully');
         }
-        console.log(`Eliminado con éxito para el ID: ${id}`);
+        console.log(`Successfully deleted ID: ${id}`);
       })
       .catch((error) => {
-        console.error(`Error al eliminar para el ID: ${id}`, error);
+        console.error(`Error deleting ID: ${id}`, error);
         throw error;
       });
 }
 
-async function agregarCliente() {
+/**
+ * Reads the "name" and "address" values from the add-user form,
+ * validates them, and sends them to the API to create a new user.
+ * On success, it clears the form and refreshes both the table and the dropdown.
+ *
+ * @async
+ * @returns {Promise<void>}
+ */
+async function agregarUsuario() {
     const nombre = document.getElementById('nombre').value;
     const direccion = document.getElementById('direccion').value;
 
+    // Basic client-side validation: both fields are required.
     if (!nombre || !direccion) {
-        alert('Por favor, complete todos los campos.');
+        alert('Please fill in all fields.');
         return;
     }
-    
+
     const usuario = { nombre, direccion };
 
     try {
         await create(usuarios_url, usuario);
-        alert('Agregado con éxito');
+        alert('User added successfully');
         limpiarFormulario();
         await actualizarLista();
         llenarSelect();
     } catch (error) {
-        alert('Error al agregar Usuario.');
+        alert('Error adding user.');
     }
 }
 
-async function eliminarUsuario() {
+/**
+ * Reads the selected user's ID along with the new "name" and "address"
+ * values from the edit form, validates them, and sends an update request
+ * to the API. On success, it clears the form and refreshes both the
+ * table and the dropdown.
+ *
+ * @async
+ * @returns {Promise<void>}
+ */
+async function editarUsuario() {
     const selectedId = document.getElementById('selectUsuario').value;
-
-    if (!selectedId) {
-        alert('Por favor, seleccione un usuario para eliminar.');
-        return;
-    }
-
-    try {
-        await eliminate(usuarios_url, selectedId);
-        alert('Eliminado con éxito');
-        limpiarFormulario();
-        await actualizarLista();
-        llenarSelect();
-    } catch (error) {
-        alert(`Error al eliminar para el ID: ${selectedId}.`);
-    }
-}
-
-async function editarCliente() {
-    const selectedId = document.getElementById('selectCliente').value;
     const nombre = document.getElementById('nombreEditar').value;
     const direccion = document.getElementById('direccionEditar').value;
 
+    // Basic client-side validation: a user must be selected and both fields filled in.
     if (!selectedId || !nombre || !direccion) {
-        alert('Por favor, complete todos los campos.');
+        alert('Please fill in all fields.');
         return;
     }
 
@@ -144,54 +178,71 @@ async function editarCliente() {
 
     try {
         await update(`${usuarios_url}/${selectedId}`, objetoEditado);
-        alert('Editado con éxito');
+        alert('User edited successfully');
         limpiarFormulario();
         await actualizarLista();
         llenarSelect();
     } catch (error) {
-        alert('Error al editar Cliente.');
-    } 
+        alert('Error editing user.');
+    }
 }
-async function eliminarCliente() {
-    const selectedId = document.getElementById('selectCliente').value;
 
+/**
+ * Reads the currently selected user's ID and sends a delete request to the API.
+ * On success, it clears the form and refreshes both the table and the dropdown.
+ *
+ * @async
+ * @returns {Promise<void>}
+ */
+async function eliminarUsuario() {
+    const selectedId = document.getElementById('selectUsuario').value;
+
+    // A user must be selected before deletion can proceed.
     if (!selectedId) {
-        alert('Por favor, seleccione un cliente para eliminar.');
+        alert('Please select a user to delete.');
         return;
     }
 
     try {
         await eliminate(usuarios_url, selectedId);
-        alert('Eliminado con éxito');
+        alert('User deleted successfully');
         limpiarFormulario();
         await actualizarLista();
         llenarSelect();
     } catch (error) {
-        alert(`Error al eliminar para el ID: ${selectedId}.`);
+        alert(`Error deleting ID: ${selectedId}.`);
     }
 }
 
-
+/**
+ * Fetches all users from the API and populates the "selectUsuario" dropdown
+ * with one option per user. It also attaches a "change" event listener so that,
+ * when a user is selected, their data is loaded into the edit form fields.
+ *
+ * @returns {void}
+ */
 function llenarSelect() {
-    const selectCliente = document.getElementById('selectCliente');
+    const selectUsuario = document.getElementById('selectUsuario');
 
     get(usuarios_url)
         .then(usuarios => {
             if (!Array.isArray(usuarios)) {
-                console.error('Error: La respuesta no es un array de usuarios');
+                console.error('Error: The response is not an array of users');
                 return;
             }
 
-            selectCliente.innerHTML = '<option value="">Seleccionar</option>';
+            // Reset the dropdown before repopulating it.
+            selectUsuario.innerHTML = '<option value="">Select</option>';
 
             usuarios.forEach(usuario => {
                 const option = document.createElement('option');
                 option.value = usuario.id;
                 option.textContent = `${usuario.id}: ${usuario.nombre} ${usuario.direccion}`;
-                selectCliente.appendChild(option);
+                selectUsuario.appendChild(option);
             });
 
-            selectCliente.addEventListener('change', function () {
+            // When the user picks an option, load that user's data into the edit form.
+            selectUsuario.addEventListener('change', function () {
                 const selectedId = this.value;
                 const usuarioSeleccionado = usuarios.find(usuario => usuario.id == selectedId);
 
@@ -208,25 +259,32 @@ function llenarSelect() {
         });
 }
 
+/**
+ * Fetches all users from the API and renders them as rows inside the
+ * "UsuariosList" table body, replacing whatever was previously displayed.
+ *
+ * @returns {void}
+ */
 function actualizarLista() {
     const UsuarioList = document.getElementById('UsuariosList');
-    
+
     get(usuarios_url)
         .then(usuarios => {
-            
+
             if (!Array.isArray(usuarios)) {
-                console.error('Error: La respuesta no es un array de usuarios');
+                console.error('Error: The response is not an array of users');
                 return;
             }
 
+            // Clear the table before rendering the updated list.
             UsuarioList.innerHTML = '';
 
             usuarios.forEach(usuario => {
-                const row = document.createElement('tr'); 
+                const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${usuario.id}</td>
                     <td>${usuario.nombre}</td>
-                    <td>${usuario.direccion}</td> 
+                    <td>${usuario.direccion}</td>
                 `;
                 UsuarioList.appendChild(row);
             });
@@ -236,22 +294,33 @@ function actualizarLista() {
         });
 }
 
+/**
+ * Clears all input fields in both the "add user" form and the "edit user" form.
+ * Typically called after a successful create, update, or delete operation.
+ *
+ * @returns {void}
+ */
 function limpiarFormulario() {
     document.getElementById('nombre').value = '';
     document.getElementById('direccion').value = '';
     document.getElementById('nombreEditar').value = '';
-    document.getElementById('direccionEditar').value = ''; 
+    document.getElementById('direccionEditar').value = '';
 }
 
+/**
+ * Entry point of the script. Waits for the DOM to be fully loaded, then:
+ * 1. Wires up the Add/Edit/Delete buttons to their respective handler functions.
+ * 2. Performs the initial population of the user dropdown and the user table.
+ */
 document.addEventListener('DOMContentLoaded', function () {
     const btnAgregar = document.getElementById('btnAgregar');
     const btnEditar = document.getElementById('btnEditar');
     const btnEliminar = document.getElementById('btnEliminar');
-    
-    btnAgregar.addEventListener('click', agregarCliente);
-    btnEditar.addEventListener('click', editarCliente);
-    btnEliminar.addEventListener('click', eliminarCliente);
+
+    btnAgregar.addEventListener('click', agregarUsuario);
+    btnEditar.addEventListener('click', editarUsuario);
+    btnEliminar.addEventListener('click', eliminarUsuario);
 
     llenarSelect();
     actualizarLista();
-});eliminarCliente
+});
