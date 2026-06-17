@@ -1,5 +1,5 @@
 <!--
-  user.html
+  crud_usuario.html
 
   This page renders a simple CRUD interface for managing User records.
   It is composed of three columns:
@@ -8,11 +8,11 @@
     3. A table that lists all current users.
 
   All dynamic behavior (API calls, DOM updates) is handled by
-  "user.js", which is loaded at the end of the body.
+  "crud_usuario.js", which is loaded at the end of the body.
 
   Note: the API still expects/returns the fields "nombre" and "direccion"
-  (Spanish field names), so those are mapped internally in user.js even
-  though every element ID and visible label here is in English.
+  (Spanish field names), so those are mapped internally in crud_usuario.js
+  even though every element ID and visible label here is in English.
 -->
 <!doctype html>
 <html lang="en">
@@ -34,7 +34,7 @@
       <!--
         Column 1: Add User form.
         Contains the input fields and button used to create a new user
-        via the "addUser()" function in user.js.
+        via the "addUser()" function in crud_usuario.js.
       -->
       <div class="column form-column">
         <h2>Add User</h2>
@@ -98,6 +98,6 @@
     </div>
 
     <!-- Script containing all CRUD logic and event handlers. -->
-    <script src="../logica/user.js"></script>
+    <script src="../logica/crud_usuario.js"></script>
   </body>
 </html>

@@ -1,5 +1,5 @@
 /**
- * user.js
+ * crud_usuario.js
  *
  * This file implements the CRUD (Create, Read, Update, Delete) logic
  * for managing User records through a REST API.
