@@ -1,0 +1,125 @@
+<!--
+  crud_factura.html
+
+  This page renders a simple CRUD interface for managing Invoice records.
+  It is composed of three columns:
+    1. A form to add a new invoice (choosing the owner from a dropdown).
+    2. A dropdown + form to select, edit, or delete an existing invoice.
+    3. A table that lists all current invoices.
+
+  All dynamic behavior (API calls, DOM updates) is handled by
+  "crud_factura.js", which is loaded at the end of the body.
+
+  Note: the API expects/returns the Spanish field names "usuario_id",
+  "monto", "fecha", and "descripcion", so those are mapped internally
+  in crud_factura.js even though every element ID and visible label
+  here is in English.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invoice CRUD</title>
+    <link rel="stylesheet" href="../estilos/crud_factura.css" />
+  </head>
+
+  <body>
+    <!-- Navigation link back to the site's home page. -->
+    <div>
+      <a href="../index.html" class="home-button">Back to home page</a>
+    </div>
+    <hr />
+
+    <div class="container">
+      <!--
+        Column 1: Add Invoice form.
+        The "ownerSelect" dropdown is populated from the Users API so the
+        invoice can be linked to an existing user via "addInvoice()".
+      -->
+      <div class="column form-column">
+        <h2>Add Invoice</h2>
+        <select id="ownerSelect" class="select-input">
+          <option value="">Select user</option>
+        </select>
+        <br />
+        <br />
+        <input
+          type="number"
+          id="amount"
+          class="form-input"
+          placeholder="amount"
+          step="0.01"
+        />
+        <input type="date" id="date" class="form-input" />
+        <input
+          type="text"
+          id="description"
+          class="form-input"
+          placeholder="description"
+        />
+        <button id="addButton" class="btn btn-agregar">Add</button>
+      </div>
+
+      <!--
+        Column 2: Select / Edit / Delete Invoice.
+        The dropdown is populated dynamically by "populateSelect()".
+        Selecting an invoice auto-fills the edit fields below, which are
+        then used by "editInvoice()" and "removeInvoice()".
+      -->
+      <div class="column select-column">
+        <h2>Select Invoice</h2>
+        <select id="selectInvoice" class="select-input">
+          <option value="">Select</option>
+        </select>
+        <br />
+        <br />
+        <select id="ownerSelectEdit" class="select-input">
+          <option value="">Select user</option>
+        </select>
+        <br />
+        <br />
+        <input
+          type="number"
+          id="amountEdit"
+          class="form-input"
+          placeholder="Amount"
+          step="0.01"
+        />
+        <input type="date" id="dateEdit" class="form-input" />
+        <input
+          type="text"
+          id="descriptionEdit"
+          class="form-input"
+          placeholder="Description"
+        />
+        <button id="editButton" class="btn btn-update">Edit</button>
+        <button id="deleteButton" class="btn btn-delete">Delete</button>
+      </div>
+
+      <!--
+        Column 3: Invoice List.
+        The table body ("invoiceList") is populated dynamically by
+        "refreshList()" every time the data changes.
+      -->
+      <div class="column view-column">
+        <h2>Invoice List</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody id="invoiceList"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Script containing all CRUD logic and event handlers. -->
+    <script src="../logica/crud_factura.js"></script>
+  </body>
+</html>

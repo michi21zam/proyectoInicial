@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const Rutas_Usuarios = require('./fuente/rutas/rutaUsuarios');
+const Rutas_Facturas = require('./fuente/rutas/rutaFacturas');
 
 
 
@@ -20,6 +21,7 @@ app.get('/end_point', (req, res) => {
 
 // Rutas de la API
 app.use('/api/Usuarios', Rutas_Usuarios);
+app.use('/api/Facturas', Rutas_Facturas);
 
 
 
