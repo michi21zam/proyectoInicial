@@ -1,14 +1,14 @@
 /**
- * crud_usuario.js
+ * user.js
  *
  * This file implements the CRUD (Create, Read, Update, Delete) logic
- * for managing "Usuario" (User) records through a REST API.
+ * for managing User records through a REST API.
  * It handles all communication with the backend, as well as the DOM
  * manipulation needed to keep the form, dropdown, and table in sync.
  */
 
 // Base URL for the Users API endpoint.
-const usuarios_url = 'http://localhost:3000/api/usuarios';
+const usersUrl = 'http://localhost:3000/api/usuarios';
 
 /**
  * Sends a GET request to the given URL and returns the parsed JSON response.
@@ -99,7 +99,7 @@ function update(url, data) {
  * @returns {Promise<void>} A promise that resolves once the record has been deleted.
  * @throws {Error} If the request fails or the response status is not OK.
  */
-function eliminate(url, id) {
+function deleteRecord(url, id) {
     const requestOptions = {
       method: 'DELETE',
       headers: {
@@ -128,24 +128,24 @@ function eliminate(url, id) {
  * @async
  * @returns {Promise<void>}
  */
-async function agregarUsuario() {
-    const nombre = document.getElementById('nombre').value;
-    const direccion = document.getElementById('direccion').value;
+async function addUser() {
+    const name = document.getElementById('name').value;
+    const address = document.getElementById('address').value;
 
     // Basic client-side validation: both fields are required.
-    if (!nombre || !direccion) {
+    if (!name || !address) {
         alert('Please fill in all fields.');
         return;
     }
 
-    const usuario = { nombre, direccion };
+    const user = { nombre: name, direccion: address };
 
     try {
-        await create(usuarios_url, usuario);
-        alert('User added successfully');
-        limpiarFormulario();
-        await actualizarLista();
-        llenarSelect();
+        await create(usersUrl, user);
+        alert('User added successfully.');
+        clearForm();
+        await refreshList();
+        populateSelect();
     } catch (error) {
         alert('Error adding user.');
     }
@@ -160,28 +160,28 @@ async function agregarUsuario() {
  * @async
  * @returns {Promise<void>}
  */
-async function editarUsuario() {
-    const selectedId = document.getElementById('selectUsuario').value;
-    const nombre = document.getElementById('nombreEditar').value;
-    const direccion = document.getElementById('direccionEditar').value;
+async function editUser() {
+    const selectedId = document.getElementById('selectUser').value;
+    const name = document.getElementById('nameEdit').value;
+    const address = document.getElementById('addressEdit').value;
 
     // Basic client-side validation: a user must be selected and both fields filled in.
-    if (!selectedId || !nombre || !direccion) {
+    if (!selectedId || !name || !address) {
         alert('Please fill in all fields.');
         return;
     }
 
-    const objetoEditado = {
-        nombre,
-        direccion
+    const editedUser = {
+        nombre: name,
+        direccion: address
     };
 
     try {
-        await update(`${usuarios_url}/${selectedId}`, objetoEditado);
-        alert('User edited successfully');
-        limpiarFormulario();
-        await actualizarLista();
-        llenarSelect();
+        await update(`${usersUrl}/${selectedId}`, editedUser);
+        alert('User edited successfully.');
+        clearForm();
+        await refreshList();
+        populateSelect();
     } catch (error) {
         alert('Error editing user.');
     }
@@ -194,8 +194,8 @@ async function editarUsuario() {
  * @async
  * @returns {Promise<void>}
  */
-async function eliminarUsuario() {
-    const selectedId = document.getElementById('selectUsuario').value;
+async function removeUser() {
+    const selectedId = document.getElementById('selectUser').value;
 
     // A user must be selected before deletion can proceed.
     if (!selectedId) {
@@ -204,53 +204,53 @@ async function eliminarUsuario() {
     }
 
     try {
-        await eliminate(usuarios_url, selectedId);
-        alert('User deleted successfully');
-        limpiarFormulario();
-        await actualizarLista();
-        llenarSelect();
+        await deleteRecord(usersUrl, selectedId);
+        alert('User deleted successfully.');
+        clearForm();
+        await refreshList();
+        populateSelect();
     } catch (error) {
         alert(`Error deleting ID: ${selectedId}.`);
     }
 }
 
 /**
- * Fetches all users from the API and populates the "selectUsuario" dropdown
+ * Fetches all users from the API and populates the "selectUser" dropdown
  * with one option per user. It also attaches a "change" event listener so that,
  * when a user is selected, their data is loaded into the edit form fields.
  *
  * @returns {void}
  */
-function llenarSelect() {
-    const selectUsuario = document.getElementById('selectUsuario');
+function populateSelect() {
+    const selectUser = document.getElementById('selectUser');
 
-    get(usuarios_url)
-        .then(usuarios => {
-            if (!Array.isArray(usuarios)) {
+    get(usersUrl)
+        .then(users => {
+            if (!Array.isArray(users)) {
                 console.error('Error: The response is not an array of users');
                 return;
             }
 
             // Reset the dropdown before repopulating it.
-            selectUsuario.innerHTML = '<option value="">Select</option>';
+            selectUser.innerHTML = '<option value="">Select</option>';
 
-            usuarios.forEach(usuario => {
+            users.forEach(user => {
                 const option = document.createElement('option');
-                option.value = usuario.id;
-                option.textContent = `${usuario.id}: ${usuario.nombre} ${usuario.direccion}`;
-                selectUsuario.appendChild(option);
+                option.value = user.id;
+                option.textContent = `${user.id}: ${user.nombre} ${user.direccion}`;
+                selectUser.appendChild(option);
             });
 
             // When the user picks an option, load that user's data into the edit form.
-            selectUsuario.addEventListener('change', function () {
+            selectUser.addEventListener('change', function () {
                 const selectedId = this.value;
-                const usuarioSeleccionado = usuarios.find(usuario => usuario.id == selectedId);
+                const selectedUser = users.find(user => user.id == selectedId);
 
-                if (usuarioSeleccionado) {
-                    document.getElementById('nombreEditar').value = usuarioSeleccionado.nombre;
-                    document.getElementById('direccionEditar').value = usuarioSeleccionado.direccion;
+                if (selectedUser) {
+                    document.getElementById('nameEdit').value = selectedUser.nombre;
+                    document.getElementById('addressEdit').value = selectedUser.direccion;
                 } else {
-                    limpiarFormulario();
+                    clearForm();
                 }
             });
         })
@@ -261,32 +261,32 @@ function llenarSelect() {
 
 /**
  * Fetches all users from the API and renders them as rows inside the
- * "UsuariosList" table body, replacing whatever was previously displayed.
+ * "userList" table body, replacing whatever was previously displayed.
  *
  * @returns {void}
  */
-function actualizarLista() {
-    const UsuarioList = document.getElementById('UsuariosList');
+function refreshList() {
+    const userList = document.getElementById('userList');
 
-    get(usuarios_url)
-        .then(usuarios => {
+    get(usersUrl)
+        .then(users => {
 
-            if (!Array.isArray(usuarios)) {
+            if (!Array.isArray(users)) {
                 console.error('Error: The response is not an array of users');
                 return;
             }
 
             // Clear the table before rendering the updated list.
-            UsuarioList.innerHTML = '';
+            userList.innerHTML = '';
 
-            usuarios.forEach(usuario => {
+            users.forEach(user => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${usuario.id}</td>
-                    <td>${usuario.nombre}</td>
-                    <td>${usuario.direccion}</td>
+                    <td>${user.id}</td>
+                    <td>${user.nombre}</td>
+                    <td>${user.direccion}</td>
                 `;
-                UsuarioList.appendChild(row);
+                userList.appendChild(row);
             });
         })
         .catch(error => {
@@ -300,11 +300,11 @@ function actualizarLista() {
  *
  * @returns {void}
  */
-function limpiarFormulario() {
-    document.getElementById('nombre').value = '';
-    document.getElementById('direccion').value = '';
-    document.getElementById('nombreEditar').value = '';
-    document.getElementById('direccionEditar').value = '';
+function clearForm() {
+    document.getElementById('name').value = '';
+    document.getElementById('address').value = '';
+    document.getElementById('nameEdit').value = '';
+    document.getElementById('addressEdit').value = '';
 }
 
 /**
@@ -313,14 +313,14 @@ function limpiarFormulario() {
  * 2. Performs the initial population of the user dropdown and the user table.
  */
 document.addEventListener('DOMContentLoaded', function () {
-    const btnAgregar = document.getElementById('btnAgregar');
-    const btnEditar = document.getElementById('btnEditar');
-    const btnEliminar = document.getElementById('btnEliminar');
+    const addButton = document.getElementById('addButton');
+    const editButton = document.getElementById('editButton');
+    const deleteButton = document.getElementById('deleteButton');
 
-    btnAgregar.addEventListener('click', agregarUsuario);
-    btnEditar.addEventListener('click', editarUsuario);
-    btnEliminar.addEventListener('click', eliminarUsuario);
+    addButton.addEventListener('click', addUser);
+    editButton.addEventListener('click', editUser);
+    deleteButton.addEventListener('click', removeUser);
 
-    llenarSelect();
-    actualizarLista();
+    populateSelect();
+    refreshList();
 });

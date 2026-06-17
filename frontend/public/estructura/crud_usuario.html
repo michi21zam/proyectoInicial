@@ -1,30 +1,32 @@
 <!--
-  crud_usuario.html
+  user.html
 
-  This page renders a simple CRUD interface for managing "Usuario" (User)
-  records. It is composed of three columns:
+  This page renders a simple CRUD interface for managing User records.
+  It is composed of three columns:
     1. A form to add a new user.
     2. A dropdown + form to select, edit, or delete an existing user.
     3. A table that lists all current users.
 
   All dynamic behavior (API calls, DOM updates) is handled by
-  "crud_usuario.js", which is loaded at the end of the body.
+  "user.js", which is loaded at the end of the body.
+
+  Note: the API still expects/returns the fields "nombre" and "direccion"
+  (Spanish field names), so those are mapped internally in user.js even
+  though every element ID and visible label here is in English.
 -->
 <!doctype html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Crud Usuarios</title>
+    <title>User CRUD</title>
     <link rel="stylesheet" href="../estilos/crud_usuario.css" />
   </head>
 
   <body>
     <!-- Navigation link back to the site's home page. -->
     <div>
-      <a href="../index.html" class="home-button"
-        >Regresar a la página de inicio</a
-      >
+      <a href="../index.html" class="home-button">Back to home page</a>
     </div>
     <hr />
 
@@ -32,75 +34,70 @@
       <!--
         Column 1: Add User form.
         Contains the input fields and button used to create a new user
-        via the "agregarUsuario()" function in crud_usuario.js.
+        via the "addUser()" function in user.js.
       -->
       <div class="column form-column">
-        <h2>Agregar Usuario</h2>
+        <h2>Add User</h2>
+        <input type="text" id="name" class="form-input" placeholder="name" />
         <input
           type="text"
-          id="nombre"
+          id="address"
           class="form-input"
-          placeholder="nombre"
+          placeholder="address"
         />
-        <input
-          type="text"
-          id="direccion"
-          class="form-input"
-          placeholder="direccion"
-        />
-        <button id="btnAgregar" class="btn btn-agregar">Agregar</button>
+        <button id="addButton" class="btn btn-agregar">Add</button>
       </div>
 
       <!--
         Column 2: Select / Edit / Delete User.
-        The dropdown is populated dynamically by "llenarSelect()".
+        The dropdown is populated dynamically by "populateSelect()".
         Selecting a user auto-fills the edit fields below, which are then
-        used by "editarUsuario()" and "eliminarUsuario()".
+        used by "editUser()" and "removeUser()".
       -->
       <div class="column select-column">
-        <h2>Seleccionar Usuario</h2>
-        <select id="selectUsuario" class="select-input">
-          <option value="">Seleccionar</option>
+        <h2>Select User</h2>
+        <select id="selectUser" class="select-input">
+          <option value="">Select</option>
         </select>
         <br />
         <br />
         <input
           type="text"
-          id="nombreEditar"
+          id="nameEdit"
           class="form-input"
-          placeholder="Nombre"
+          placeholder="Name"
         />
         <input
           type="text"
-          id="direccionEditar"
+          id="addressEdit"
           class="form-input"
-          placeholder="Direccion"
+          placeholder="Address"
         />
-        <button id="btnEditar" class="btn btn-update">Editar</button>
-        <button id="btnEliminar" class="btn btn-delete">Eliminar</button>
+        <button id="editButton" class="btn btn-update">Edit</button>
+        <button id="deleteButton" class="btn btn-delete">Delete</button>
       </div>
 
       <!--
         Column 3: User List.
-        The table body ("UsuariosList") is populated dynamically by
-        "actualizarLista()" every time the data changes.
+        The table body ("userList") is populated dynamically by
+        "refreshList()" every time the data changes.
       -->
       <div class="column view-column">
-        <h2>Lista de Usuarios</h2>
+        <h2>User List</h2>
         <table>
           <thead>
             <tr>
               <th>ID</th>
-              <th>Nombre</th>
-              <th>Direccion</th>
+              <th>Name</th>
+              <th>Address</th>
             </tr>
           </thead>
-          <tbody id="UsuariosList"></tbody>
+          <tbody id="userList"></tbody>
         </table>
       </div>
     </div>
 
     <!-- Script containing all CRUD logic and event handlers. -->
-    <script src="../logica/crud_usuario.js"></script>
+    <script src="../logica/user.js"></script>
   </body>
 </html>
