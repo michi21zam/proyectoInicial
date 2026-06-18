@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User CRUD</title>
+    <link rel="stylesheet" href="../styles/global.css" />
+    <link rel="stylesheet" href="../styles/users.css" />
+  </head>
+
+  <body>
+    <div>
+      <a href="../pages/home.html" class="home-button">Back to Home</a>
+    </div>
+    <hr />
+
+    <div class="container">
+      <div class="column form-column">
+        <h2>Add User</h2>
+
+        <input type="text" id="name" class="form-input" placeholder="Name" />
+        <input
+          type="text"
+          id="address"
+          class="form-input"
+          placeholder="Address"
+        />
+
+        <button id="addButton" class="btn btn-add">Add</button>
+      </div>
+
+      <div class="column select-column">
+        <h2>Manage User</h2>
+
+        <select id="selectUser" class="select-input">
+          <option value="">Select user</option>
+        </select>
+
+        <br /><br />
+
+        <input
+          type="text"
+          id="nameEdit"
+          class="form-input"
+          placeholder="Name"
+        />
+        <input
+          type="text"
+          id="addressEdit"
+          class="form-input"
+          placeholder="Address"
+        />
+
+        <button id="editButton" class="btn btn-update">Edit</button>
+        <button id="deleteButton" class="btn btn-delete">Delete</button>
+      </div>
+
+      <div class="column view-column">
+        <h2>User List</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Address</th>
+            </tr>
+          </thead>
+          <tbody id="userList"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="../scripts/users.js"></script>
+  </body>
+</html>

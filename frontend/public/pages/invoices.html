@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invoice CRUD</title>
+    <link rel="stylesheet" href="../styles/global.css" />
+    <link rel="stylesheet" href="../styles/invoices.css" />
+  </head>
+
+  <body>
+    <div>
+      <a href="../pages/home.html" class="home-button">Back to Home</a>
+    </div>
+    <hr />
+
+    <div class="container">
+      <div class="column form-column">
+        <h2>Add Invoice</h2>
+        <select id="ownerSelect" class="select-input">
+          <option value="">Select user</option>
+        </select>
+
+        <br /><br />
+
+        <input
+          type="number"
+          id="amount"
+          class="form-input"
+          placeholder="Amount"
+          step="0.01"
+        />
+        <input type="date" id="date" class="form-input" />
+        <input
+          type="text"
+          id="description"
+          class="form-input"
+          placeholder="Description"
+        />
+
+        <button id="addButton" class="btn btn-add">Add</button>
+      </div>
+
+      <div class="column select-column">
+        <h2>Manage Invoice</h2>
+
+        <select id="selectInvoice" class="select-input">
+          <option value="">Select invoice</option>
+        </select>
+
+        <br /><br />
+
+        <select id="ownerSelectEdit" class="select-input">
+          <option value="">Select user</option>
+        </select>
+
+        <br /><br />
+
+        <input
+          type="number"
+          id="amountEdit"
+          class="form-input"
+          placeholder="Amount"
+          step="0.01"
+        />
+        <input type="date" id="dateEdit" class="form-input" />
+        <input
+          type="text"
+          id="descriptionEdit"
+          class="form-input"
+          placeholder="Description"
+        />
+
+        <button id="editButton" class="btn btn-update">Edit</button>
+        <button id="deleteButton" class="btn btn-delete">Delete</button>
+      </div>
+
+      <div class="column view-column">
+        <h2>Invoice List</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody id="invoiceList"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="../scripts/invoices.js"></script>
+  </body>
+</html>
