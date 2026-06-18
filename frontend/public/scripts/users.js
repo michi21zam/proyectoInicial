@@ -2,7 +2,7 @@
 // USER CRUD MANAGEMENT
 // ====================
 
-const usersUrl = 'http://localhost:3000/api/usuarios';
+const usersUrl = 'http://localhost:3000/api/users';
 
 // ====================
 // API HELPERS
@@ -99,8 +99,8 @@ async function addUser() {
     }
 
     const user = {
-        nombre: name,
-        direccion: address
+        name,
+        address
     };
 
     try {
@@ -125,8 +125,8 @@ async function editUser() {
     }
 
     const editedUser = {
-        nombre: name,
-        direccion: address
+        name,
+        address
     };
 
     try {
@@ -173,7 +173,7 @@ function populateSelect() {
             users.forEach(user => {
                 const option = document.createElement('option');
                 option.value = user.id;
-                option.textContent = `${user.id}: ${user.nombre} ${user.direccion}`;
+                option.textContent = `${user.id}: ${user.name} ${user.address}`;
                 selectUser.appendChild(option);
             });
 
@@ -182,8 +182,8 @@ function populateSelect() {
                 const selectedUser = users.find(user => user.id == this.value);
 
                 if (selectedUser) {
-                    document.getElementById('nameEdit').value = selectedUser.nombre;
-                    document.getElementById('addressEdit').value = selectedUser.direccion;
+                    document.getElementById('nameEdit').value = selectedUser.name;
+                    document.getElementById('addressEdit').value = selectedUser.address;
                 } else {
                     clearForm();
                 }
@@ -203,8 +203,8 @@ function refreshList() {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${user.id}</td>
-                    <td>${user.nombre}</td>
-                    <td>${user.direccion}</td>
+                    <td>${user.name}</td>
+                    <td>${user.address}</td>
                 `;
                 userList.appendChild(row);
             });

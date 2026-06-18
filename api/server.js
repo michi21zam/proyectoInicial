@@ -1,31 +1,30 @@
 const express = require("express");
 const cors = require("cors");
-const Rutas_Usuarios = require('./fuente/rutas/rutaUsuarios');
-const Rutas_Facturas = require('./fuente/rutas/rutaFacturas');
 
-
+const userRoutes = require("./src/routes/userRoutes");
+const invoiceRoutes = require("./src/routes/invoiceRoutes");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configuración de CORS
-app.use(cors({ origin: '*' }));
+// CORS configuration
+app.use(cors({ origin: "*" }));
 
-// Middleware para parsear JSON
+// JSON parser
 app.use(express.json());
 
-// Ruta de prueba
-app.get('/end_point', (req, res) => {
-    res.json({ mensaje: 'Servidor iniciado' });
+// Health check endpoint
+app.get("/endpoint", (req, res) => {
+    res.json({
+        message: "Server is running"
+    });
 });
 
-// Rutas de la API
-app.use('/api/Usuarios', Rutas_Usuarios);
-app.use('/api/Facturas', Rutas_Facturas);
+// API routes
+app.use("/api/users", userRoutes);
+app.use("/api/invoices", invoiceRoutes);
 
-
-
-// Iniciar el servidor
+// Start server
 app.listen(port, () => {
-    console.log(`Servidor iniciado en el puerto localhost:${port}`);
+    console.log(`Server running on http://localhost:${port}`);
 });

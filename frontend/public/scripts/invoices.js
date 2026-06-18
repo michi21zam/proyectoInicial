@@ -2,8 +2,8 @@
 // INVOICE CRUD MANAGEMENT
 // ====================
 
-const invoicesUrl = 'http://localhost:3000/api/facturas';
-const usersUrl = 'http://localhost:3000/api/usuarios';
+const invoicesUrl = 'http://localhost:3000/api/invoices';
+const usersUrl = 'http://localhost:3000/api/users';
 
 // ====================
 // API HELPERS
@@ -99,7 +99,7 @@ function populateUserOptions(selectId) {
             users.forEach(user => {
                 const option = document.createElement('option');
                 option.value = user.id;
-                option.textContent = `${user.id}: ${user.nombre}`;
+                option.textContent = `${user.id}: ${user.name}`;
                 selectElement.appendChild(option);
             });
         })
@@ -116,7 +116,7 @@ function populateSelect() {
             invoices.forEach(invoice => {
                 const option = document.createElement('option');
                 option.value = invoice.id;
-                option.textContent = `${invoice.id}: ${invoice.usuario_nombre} - ${invoice.monto}`;
+                option.textContent = `${invoice.id}: ${invoice.user_name} - ${invoice.amount}`;
                 selectInvoice.appendChild(option);
             });
 
@@ -127,15 +127,15 @@ function populateSelect() {
                 );
 
                 if (selectedInvoice) {
-                    document.getElementById('ownerSelectEdit').value = selectedInvoice.usuario_id;
-                    document.getElementById('amountEdit').value = selectedInvoice.monto;
+                    document.getElementById('ownerSelectEdit').value = selectedInvoice.user_id;
+                    document.getElementById('amountEdit').value = selectedInvoice.amount;
 
                     // API returns ISO datetime; date input expects YYYY-MM-DD
                     document.getElementById('dateEdit').value =
-                        selectedInvoice.fecha.split('T')[0];
+                        selectedInvoice.date.split('T')[0];
 
                     document.getElementById('descriptionEdit').value =
-                        selectedInvoice.descripcion;
+                        selectedInvoice.description;
                 } else {
                     clearForm();
                 }
@@ -155,10 +155,10 @@ function refreshList() {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${invoice.id}</td>
-                    <td>${invoice.usuario_nombre}</td>
-                    <td>${invoice.monto}</td>
-                    <td>${invoice.fecha.split('T')[0]}</td>
-                    <td>${invoice.descripcion}</td>
+                    <td>${invoice.user_name}</td>
+                    <td>${invoice.amount}</td>
+                    <td>${invoice.date.split('T')[0]}</td>
+                    <td>${invoice.description}</td>
                 `;
                 invoiceList.appendChild(row);
             });
@@ -195,10 +195,10 @@ async function addInvoice() {
     }
 
     const invoice = {
-        usuario_id: userId,
-        monto: amount,
-        fecha: date,
-        descripcion: description
+        user_id: userId,
+        amount,
+        date,
+        description
     };
 
     try {
@@ -225,10 +225,10 @@ async function editInvoice() {
     }
 
     const editedInvoice = {
-        usuario_id: userId,
-        monto: amount,
-        fecha: date,
-        descripcion: description
+        user_id: userId,
+        amount,
+        date,
+        description
     };
 
     try {
