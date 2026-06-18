@@ -2,7 +2,7 @@
 // USER CRUD MANAGEMENT
 // ====================
 
-const usersUrl = 'http://localhost:3000/api/users';
+const usersUrl = `${api}/users`;
 
 // ====================
 // API HELPERS
