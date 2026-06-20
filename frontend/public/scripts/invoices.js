@@ -1,89 +1,11 @@
 // ====================
 // INVOICE CRUD MANAGEMENT
 // ====================
+// Relies on the shared get/create/update/deleteRecord functions defined
+// in apiHelpers.js, which must be loaded before this file.
 
 const invoicesUrl = 'http://localhost:3000/api/invoices';
 const usersUrl = 'http://localhost:3000/api/users';
-
-// ====================
-// API HELPERS
-// ====================
-
-function get(url) {
-    return fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error fetching data');
-            }
-            return response.json();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            throw error;
-        });
-}
-
-function create(url, data) {
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    };
-
-    return fetch(url, requestOptions)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Request failed. Status code: ${response.status}`);
-            }
-            return response.json();
-        })
-        .catch(error => {
-            console.error('Request error:', error);
-            throw error;
-        });
-}
-
-function update(url, data) {
-    const requestOptions = {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    };
-
-    return fetch(url, requestOptions)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Request failed');
-            }
-            return response.json();
-        })
-        .catch(error => {
-            console.error('Request error:', error);
-            throw error;
-        });
-}
-
-function deleteRecord(url, id) {
-    return fetch(`${url}/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Request failed');
-            }
-        })
-        .catch(error => {
-            console.error('Delete error:', error);
-            throw error;
-        });
-}
 
 // ====================
 // UI HELPERS
