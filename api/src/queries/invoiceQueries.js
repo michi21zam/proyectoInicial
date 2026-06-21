@@ -1,49 +1,40 @@
-const get = `
-    SELECT
-        i.id,
-        i.user_id,
-        u.name AS user_name,
-        i.amount,
-        i.date,
-        i.description
-    FROM invoices i
-    JOIN users u ON i.user_id = u.id
-    ORDER BY i.id
-`;
+const db = require("../../app_db");
 
-const getById = `
-    SELECT
-        i.id,
-        i.user_id,
-        u.name AS user_name,
-        i.amount,
-        i.date,
-        i.description
-    FROM invoices i
-    JOIN users u ON i.user_id = u.id
-    WHERE i.id = $1
-`;
+const get = () =>
+    db('invoices as i')
+        .join('users as u', 'i.user_id', 'u.id')
+        .select(
+            'i.id',
+            'i.user_id',
+            'u.name as user_name',
+            'i.amount',
+            'i.date',
+            'i.description'
+        )
+        .orderBy('i.id');
 
-const add = `
-    INSERT INTO invoices
-    (user_id, amount, date, description)
-    VALUES ($1, $2, $3, $4)
-`;
+const getById = (id) =>
+    db('invoices as i')
+        .join('users as u', 'i.user_id', 'u.id')
+        .select(
+            'i.id',
+            'i.user_id',
+            'u.name as user_name',
+            'i.amount',
+            'i.date',
+            'i.description'
+        )
+        .where('i.id', id);
 
-const remove = `
-    DELETE FROM invoices
-    WHERE id = $1
-`;
+const add = (user_id, amount, date, description) =>
+    db('invoices').insert({ user_id, amount, date, description });
 
-const update = `
-    UPDATE invoices
-    SET
-        user_id = $1,
-        amount = $2,
-        date = $3,
-        description = $4
-    WHERE id = $5
-`;
+const remove = (id) => db('invoices').where({ id }).del();
+
+const update = (id, user_id, amount, date, description) =>
+    db('invoices')
+        .where({ id })
+        .update({ user_id, amount, date, description });
 
 module.exports = {
     get,

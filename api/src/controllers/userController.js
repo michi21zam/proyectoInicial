@@ -1,90 +1,52 @@
-const pool = require("../../app_db");
 const queries = require("../queries/userQueries");
 
-const getUsers = (req, res) => {
-    pool.query(queries.get, (error, results) => {
-        if (error) throw error;
-
-        res.status(200).json(results.rows);
-    });
+const getUsers = async (req, res) => {
+    try {
+        const users = await queries.get();
+        res.status(200).json(users);
+    } catch (error) {
+        throw error;
+    }
 };
 
-const createUser = (req, res) => {
+const createUser = async (req, res) => {
     const { name, address } = req.body;
 
-    pool.query(
-        queries.checkNameExists,
-        [name],
-        (error, results) => {
-            if (error) throw error;
+    try {
+        const existingUsers = await queries.checkNameExists(name);
 
-            if (results.rows.length) {
-                return res.status(409).json({
-                    message: "User already exists"
-                });
-            }
-
-            pool.query(
-                queries.add,
-                [name, address],
-                (error, results) => {
-                    if (error) throw error;
-
-                    res.status(201).json({
-                        message: "User created successfully"
-                    });
-                }
-            );
-        }
-    );
-};
-
-const getUserById = (req, res) => {
-    const id = parseInt(req.params.id);
-
-    pool.query(queries.getById, [id], (error, results) => {
-        if (error) throw error;
-
-        res.status(200).json(results.rows);
-    });
-};
-
-const deleteUser = (req, res) => {
-    const id = parseInt(req.params.id);
-
-    pool.query(queries.getById, [id], (error, results) => {
-        if (error) throw error;
-
-        const notFound = !results.rows.length;
-
-        if (notFound) {
-            return res.status(404).json({
-                message: "User not found"
+        if (existingUsers.length) {
+            return res.status(409).json({
+                message: "User already exists"
             });
         }
 
-        pool.query(queries.remove, [id], (error, results) => {
-            if (error) throw error;
-
-            res.status(200).json({
-                message: "User deleted successfully"
-            });
+        await queries.add(name, address);
+        res.status(201).json({
+            message: "User created successfully"
         });
-    });
+    } catch (error) {
+        throw error;
+    }
 };
 
-const updateUser = (req, res) => {
+const getUserById = async (req, res) => {
     const id = parseInt(req.params.id);
 
-    const {
-        name,
-        address
-    } = req.body;
+    try {
+        const user = await queries.getById(id);
+        res.status(200).json(user);
+    } catch (error) {
+        throw error;
+    }
+};
 
-    pool.query(queries.getById, [id], (error, results) => {
-        if (error) throw error;
+const deleteUser = async (req, res) => {
+    const id = parseInt(req.params.id);
 
-        const notFound = !results.rows.length;
+    try {
+        const existingUser = await queries.getById(id);
+        const notFound = !existingUser.length;
 
         if (notFound) {
             return res.status(404).json({
@@ -92,18 +54,36 @@ const updateUser = (req, res) => {
             });
         }
 
-        pool.query(
-            queries.update,
-            [name, address, id],
-            (error, results) => {
-                if (error) throw error;
+        await queries.remove(id);
+        res.status(200).json({
+            message: "User deleted successfully"
+        });
+    } catch (error) {
+        throw error;
+    }
+};
 
-                res.status(200).json({
-                    message: "User updated successfully"
-                });
-            }
-        );
-    });
+const updateUser = async (req, res) => {
+    const id = parseInt(req.params.id);
+    const { name, address } = req.body;
+
+    try {
+        const existingUser = await queries.getById(id);
+        const notFound = !existingUser.length;
+
+        if (notFound) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        await queries.update(id, name, address);
+        res.status(200).json({
+            message: "User updated successfully"
+        });
+    } catch (error) {
+        throw error;
+    }
 };
 
 module.exports = {

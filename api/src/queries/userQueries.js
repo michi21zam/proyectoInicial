@@ -1,47 +1,16 @@
-const get = `
-    SELECT
-        id,
-        name,
-        address
-    FROM users
-`;
+const db = require("../../app_db");
 
-const getById = `
-    SELECT
-        id,
-        name,
-        address
-    FROM users
-    WHERE id = $1
-`;
+const get = () => db('users').select('id', 'name', 'address');
 
-const checkNameExists = `
-    SELECT
-        id,
-        name,
-        address
-    FROM users
-    WHERE name = $1
-`;
+const getById = (id) => db('users').select('id', 'name', 'address').where({ id });
 
-const add = `
-    INSERT INTO users
-    (name, address)
-    VALUES ($1, $2)
-`;
+const checkNameExists = (name) => db('users').select('id', 'name', 'address').where({ name });
 
-const remove = `
-    DELETE FROM users
-    WHERE id = $1
-`;
+const add = (name, address) => db('users').insert({ name, address });
 
-const update = `
-    UPDATE users
-    SET
-        name = $1,
-        address = $2
-    WHERE id = $3
-`;
+const remove = (id) => db('users').where({ id }).del();
+
+const update = (id, name, address) => db('users').where({ id }).update({ name, address });
 
 module.exports = {
     get,
