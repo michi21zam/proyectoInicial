@@ -1,40 +1,33 @@
 const db = require("../../app_db");
 
-const get = () =>
-    db('invoices as i')
-        .join('users as u', 'i.user_id', 'u.id')
-        .select(
-            'i.id',
-            'i.user_id',
-            'u.name as user_name',
-            'i.amount',
-            'i.date',
-            'i.description'
-        )
-        .orderBy('i.id');
+// SELECT
+const get = async () => {
+    const result = await db.raw("SELECT * FROM fn_get_invoices()");
+    return result.rows;
+};
 
-const getById = (id) =>
-    db('invoices as i')
-        .join('users as u', 'i.user_id', 'u.id')
-        .select(
-            'i.id',
-            'i.user_id',
-            'u.name as user_name',
-            'i.amount',
-            'i.date',
-            'i.description'
-        )
-        .where('i.id', id);
+const getById = async (id) => {
+    const result = await db.raw("SELECT * FROM fn_get_invoice_by_id(?)", [id]);
+    return result.rows;þ
+};
 
-const add = (user_id, amount, date, description) =>
-    db('invoices').insert({ user_id, amount, date, description });
+// INSERT (returns the new id)
+const add = async (user_id, amount, date, description) => {
+    const result = await db.raw(
+        "SELECT fn_add_invoice(?, ?, ?, ?) AS id",
+        [user_id, amount, date, description]
+    );
+    return result.rows[0];
+};
 
-const remove = (id) => db('invoices').where({ id }).del();
+// DELETE / UPDATE
+const remove = (id) => db.raw("CALL sp_remove_invoice(?)", [id]);
 
 const update = (id, user_id, amount, date, description) =>
-    db('invoices')
-        .where({ id })
-        .update({ user_id, amount, date, description });
+    db.raw(
+        "CALL sp_update_invoice(?, ?, ?, ?, ?)",
+        [id, user_id, amount, date, description]
+    );
 
 module.exports = {
     get,
